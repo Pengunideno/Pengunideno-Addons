@@ -76,17 +76,27 @@ local function initializeBusStops()
             end
         }
 
+        interactKeybind = lib.addKeybind({
+            name = 'busStopInteract',
+            description = 'Press E to open the bus stop menu',
+            defaultKey = 'E',
+            onReleased = function()
+                lib.showContext('busStop')
+            end
+        })
+        -- We need to disable this keybind to not work until we want it to work.
+        interactKeybind:disable(true)
+        
         lib.points.new({
             coords = stop.location,
             distance = 2.0,
             onEnter = function()
+                interactKeybind:disable(false)
                 lib.showTextUI('[E] - Open Bus Stop Menu', { position = 'top-center', icon = 'bus' })
             end,
-            onExit = lib.hideTextUI,
-            nearby = function()
-                if IsControlJustPressed(0, 38) and not cache.vehicle then
-                    lib.showContext('busStop')
-                end
+            onExit = function()
+                interactKeybind:disable(true)
+                lib.hideTextUI()
             end
         })
     end
